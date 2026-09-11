@@ -171,6 +171,7 @@ pub fn remove_snapshot_directory(dest: &Path) -> Result<(), FilestoreError> {
 mod tests {
     use super::*;
     use std::fs;
+    #[cfg(unix)]
     use std::os::unix::fs::MetadataExt;
     use tempfile::TempDir;
 
@@ -192,7 +193,15 @@ mod tests {
         assert_eq!(fs::read(dest.join("checksum-cd").join("cde456")).unwrap(), b"more bytes");
     }
 
+    // Inode identity is a Unix filesystem concept — `Metadata::ino()` only
+    // exists behind `std::os::unix::fs::MetadataExt`. Windows hardlinks are
+    // real (NTFS supports them, and `snapshot_directory` uses
+    // `std::fs::hard_link` unconditionally), but proving "same inode" needs
+    // a different API there (`file_index` via `MetadataExt` from
+    // `std::os::windows::fs`) that this test doesn't attempt — it's a gap,
+    // not a claim that hardlinking itself is broken on Windows.
     #[test]
+    #[cfg(unix)]
     fn hardlinked_files_genuinely_share_the_same_inode() {
         let root = TempDir::new().unwrap();
         let source = root.path().join("source");
@@ -253,7 +262,15 @@ mod tests {
         );
     }
 
+    // Creating a symlink on Windows needs `SeCreateSymbolicLinkPrivilege`
+    // (usually only granted to admins or via Developer Mode), which a bare
+    // CI runner can't be assumed to have — so this test drives symlink
+    // *creation* through the Unix API directly rather than trying to be
+    // portable. `recreate_symlink` itself (the code under test elsewhere)
+    // does have a real, if unimplemented, Windows branch — see its `#[cfg]`
+    // split above.
     #[test]
+    #[cfg(unix)]
     fn symlinks_are_recreated_as_symlinks_not_followed() {
         let root = TempDir::new().unwrap();
         let source = root.path().join("source");

@@ -686,7 +686,13 @@ mod tests {
         // and grant it ownership of the data dir first. See
         // `sandbox_root_workaround_user`'s doc comment — a no-op on any real
         // desktop install, where the process is never root to begin with.
+        // `sandbox_root_workaround_user` only ever returns `Some` when
+        // actually running as root reading a real `/etc/passwd` — i.e.
+        // never on Windows — but `std::os::unix::fs::chown` still has to
+        // *compile* there regardless of whether this branch runs, so it's
+        // gated on its own rather than relying on the branch never firing.
         if let Some((uid, gid)) = sandbox_root_workaround_user() {
+            #[cfg(unix)]
             std::os::unix::fs::chown(data_dir, Some(uid), Some(gid)).expect("chown temp data dir for postgres test");
             config.run_as = Some((uid, gid));
         }

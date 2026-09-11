@@ -337,7 +337,13 @@ mod tests {
     async fn start_test_cluster(dir: &std::path::Path, port: u16) -> (PgSupervisor, PgConnInfo) {
         let bin_dir = discover_system_bin_dir().expect("these tests need a system Postgres installed");
         let mut config = PgConfig::new(bin_dir.clone(), dir, port);
+        // `sandbox_root_workaround_user` only ever returns `Some` when
+        // actually running as root reading a real `/etc/passwd` — i.e.
+        // never on Windows — but `std::os::unix::fs::chown` still has to
+        // *compile* there regardless of whether this branch runs, so it's
+        // its own `#[cfg(unix)]` function rather than an inline call.
         if let Some((uid, gid)) = sandbox_root_workaround_user() {
+            #[cfg(unix)]
             std::os::unix::fs::chown(dir, Some(uid), Some(gid)).expect("chown temp data dir for pg_admin test");
             config.run_as = Some((uid, gid));
         }

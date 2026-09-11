@@ -4253,6 +4253,33 @@ mod tests {
         (core, instance.id, dir)
     }
 
+    /// Whether two paths' metadata identifies the *same underlying file* on
+    /// disk (the way two hardlinks to one inode do) — not merely equal
+    /// content. There is no cross-platform std API for this: Unix exposes
+    /// it as `ino()` (`std::os::unix::fs::MetadataExt`), Windows as
+    /// `file_index()` (`std::os::windows::fs::MetadataExt`, which needs the
+    /// file to actually be opened to populate, hence `File::open` here
+    /// rather than `fs::metadata`). This was previously Unix-only code with
+    /// no `#[cfg]` guard at all, which meant the whole crate failed to
+    /// *compile* on Windows — caught by actually running CI there for the
+    /// first time (windows-process-supervision.yml) rather than by review.
+    #[cfg(unix)]
+    fn same_file_identity(a: &std::path::Path, b: &std::path::Path) -> bool {
+        use std::os::unix::fs::MetadataExt;
+        std::fs::metadata(a).unwrap().ino() == std::fs::metadata(b).unwrap().ino()
+    }
+    #[cfg(windows)]
+    fn same_file_identity(a: &std::path::Path, b: &std::path::Path) -> bool {
+        use std::os::windows::fs::MetadataExt;
+        let fa = std::fs::File::open(a).unwrap().metadata().unwrap().file_index();
+        let fb = std::fs::File::open(b).unwrap().metadata().unwrap().file_index();
+        fa.is_some() && fa == fb
+    }
+    #[cfg(not(any(unix, windows)))]
+    fn same_file_identity(_a: &std::path::Path, _b: &std::path::Path) -> bool {
+        false
+    }
+
     /// Database-lifecycle tests (`create_database`, `duplicate_database`,
     /// `drop_database`, `backup_database`, `restore_database`) do real
     /// Postgres I/O, so unlike the helper above they need an instance that
@@ -4504,13 +4531,13 @@ mod tests {
         assert!(backed_up_files.is_dir(), "the backup must include the attachments, not just the rows");
 
         // Real bytes, not a hardlink: a backup has to survive its source
-        // being deleted and to be movable to another disk.
+        // being deleted and to be movable to another disk. File identity
+        // is a platform concept — inode on Unix, file index on Windows —
+        // so this check dispatches to whichever the OS actually has rather
+        // than only compiling on Unix (see `same_file_identity` below).
         let backed_up = backed_up_files.join("a1b2c3");
-        let same_inode = {
-            use std::os::unix::fs::MetadataExt;
-            std::fs::metadata(&backed_up).unwrap().ino() == std::fs::metadata(filestore.join("a1b2c3")).unwrap().ino()
-        };
-        assert!(!same_inode, "a backup must own its bytes, not share them with the live filestore");
+        let same_identity = same_file_identity(&backed_up, &filestore.join("a1b2c3"));
+        assert!(!same_identity, "a backup must own its bytes, not share them with the live filestore");
 
         let events = core.recent_events(50).unwrap();
         assert!(
