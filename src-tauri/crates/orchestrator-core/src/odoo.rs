@@ -512,9 +512,37 @@ pub fn process_usage(pid: u32) -> Option<ProcessUsage> {
     Some(ProcessUsage { memory_bytes: rss_kb * 1024, cpu_percent })
 }
 
+/// Windows has no `ps`, but PowerShell's `Get-Process` exposes the same two
+/// numbers: `WorkingSet64` is the RSS equivalent, and `CPU` is total
+/// processor time consumed (seconds) since the process started — dividing
+/// that by wall-clock time elapsed since `StartTime` gives the same
+/// "average percent of one CPU over the process's life" figure `ps -o pcpu`
+/// reports on Unix (see this struct's doc comment), just computed by hand
+/// instead of by the OS. This was previously a hard-coded `None` stub with
+/// no platform note distinguishing "not implemented" from "really has no
+/// usage" — the Stats screen would have shown a real Windows Odoo process
+/// as if it had already exited. Caught by running this suite on Windows for
+/// the first time, not by review.
 #[cfg(not(unix))]
-pub fn process_usage(_pid: u32) -> Option<ProcessUsage> {
-    None
+pub fn process_usage(pid: u32) -> Option<ProcessUsage> {
+    let script = format!(
+        "$p = Get-Process -Id {pid} -ErrorAction Stop; \
+         $elapsed = ((Get-Date) - $p.StartTime).TotalSeconds; \
+         $cpuPct = if ($elapsed -gt 0) {{ ($p.CPU / $elapsed) * 100 }} else {{ 0 }}; \
+         Write-Output \"$($p.WorkingSet64),$cpuPct\""
+    );
+    let output = std::process::Command::new("powershell")
+        .args(["-NoProfile", "-NonInteractive", "-Command", &script])
+        .output()
+        .ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let text = String::from_utf8_lossy(&output.stdout);
+    let mut fields = text.trim().split(',');
+    let memory_bytes: u64 = fields.next()?.parse().ok()?;
+    let cpu_percent: f32 = fields.next()?.parse().ok()?;
+    Some(ProcessUsage { memory_bytes, cpu_percent })
 }
 
 /// Whether a pid is still around — `kill -0`, the standard "does this
@@ -865,9 +893,17 @@ time.sleep(60)
             other => panic!("expected Running, got {other:?}"),
         };
 
-        // Kill it out-of-band — exactly what an OOM killer or a user's own
-        // `kill` would do, not something going through our own stop().
+        // Kill it out-of-band — exactly what an OOM killer, Task Manager,
+        // or a user's own `kill`/`taskkill` would do, not something going
+        // through our own stop(). `kill -9` has no Windows equivalent —
+        // that platform's version of an unconditional, immediate kill is
+        // `taskkill /F` (no `/T`, unlike `send_signal`'s escalation path:
+        // this simulates an external kill of just this one process, not
+        // our own graceful-then-forceful shutdown of a tree).
+        #[cfg(unix)]
         let killed = std::process::Command::new("kill").arg("-9").arg(pid.to_string()).status();
+        #[cfg(not(unix))]
+        let killed = std::process::Command::new("taskkill").arg("/PID").arg(pid.to_string()).arg("/F").status();
         assert!(killed.map(|s| s.success()).unwrap_or(false), "test setup: failed to kill the stand-in server");
 
         let mut noticed = false;
