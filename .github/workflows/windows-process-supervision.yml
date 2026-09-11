@@ -50,4 +50,10 @@ jobs:
         # `core_with_running_postgres_and_server`), so running the whole
         # crate here would mostly just prove those skips work, not
         # anything about Windows.
-        run: cargo test -p orchestrator-core --lib odoo:: -- --nocapture
+        # Block scalar (not a plain one-liner): a plain YAML scalar can't
+        # contain ": " anywhere in it, and `odoo::` immediately followed by
+        # ` --nocapture` produces exactly that sequence — GitHub's parser
+        # rejects it as "mapping values are not allowed here". This is the
+        # actual bug that broke the very first push of this workflow.
+        run: |
+          cargo test -p orchestrator-core --lib odoo:: -- --nocapture
