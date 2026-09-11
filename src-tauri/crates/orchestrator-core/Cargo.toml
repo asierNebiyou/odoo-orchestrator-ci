@@ -22,3 +22,10 @@ sha2 = "0.10"
 
 [dev-dependencies]
 tempfile = "3"
+# File-identity comparison (`same_file_identity` test helper in lib.rs) on
+# stable Rust: the std equivalent on Windows, `MetadataExt::file_index()`,
+# sits behind the unstable `windows_by_handle` feature (rust-lang/rust#63010)
+# and won't compile on stable at all — this crate already rides along
+# transitively (notify -> same-file on Windows), promoted here to a direct
+# dependency now that test code calls it directly.
+same-file = "1"

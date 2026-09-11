@@ -4255,29 +4255,17 @@ mod tests {
 
     /// Whether two paths' metadata identifies the *same underlying file* on
     /// disk (the way two hardlinks to one inode do) — not merely equal
-    /// content. There is no cross-platform std API for this: Unix exposes
-    /// it as `ino()` (`std::os::unix::fs::MetadataExt`), Windows as
-    /// `file_index()` (`std::os::windows::fs::MetadataExt`, which needs the
-    /// file to actually be opened to populate, hence `File::open` here
-    /// rather than `fs::metadata`). This was previously Unix-only code with
-    /// no `#[cfg]` guard at all, which meant the whole crate failed to
-    /// *compile* on Windows — caught by actually running CI there for the
-    /// first time (windows-process-supervision.yml) rather than by review.
-    #[cfg(unix)]
+    /// content. There's no *stable* cross-platform std API for this: Unix
+    /// has `ino()` (`std::os::unix::fs::MetadataExt`), but the Windows
+    /// equivalent, `file_index()`, sits behind the unstable
+    /// `windows_by_handle` feature (rust-lang/rust#63010) and refuses to
+    /// compile on stable at all — caught only because this workflow
+    /// actually compiles the crate on a real `windows-latest` runner
+    /// instead of everyone assuming `#[cfg(unix)]` was the whole story.
+    /// `same-file` is what `walkdir`/`notify` themselves use for exactly
+    /// this, implemented against the stable Windows API underneath.
     fn same_file_identity(a: &std::path::Path, b: &std::path::Path) -> bool {
-        use std::os::unix::fs::MetadataExt;
-        std::fs::metadata(a).unwrap().ino() == std::fs::metadata(b).unwrap().ino()
-    }
-    #[cfg(windows)]
-    fn same_file_identity(a: &std::path::Path, b: &std::path::Path) -> bool {
-        use std::os::windows::fs::MetadataExt;
-        let fa = std::fs::File::open(a).unwrap().metadata().unwrap().file_index();
-        let fb = std::fs::File::open(b).unwrap().metadata().unwrap().file_index();
-        fa.is_some() && fa == fb
-    }
-    #[cfg(not(any(unix, windows)))]
-    fn same_file_identity(_a: &std::path::Path, _b: &std::path::Path) -> bool {
-        false
+        same_file::is_same_file(a, b).unwrap()
     }
 
     /// Database-lifecycle tests (`create_database`, `duplicate_database`,
