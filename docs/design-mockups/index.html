@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Odoo Orchestrator — design mockups</title>
+<style>
+  :root{
+    --canvas:#08090a; --s1:#0f1011; --s2:#141516; --hair:#212327;
+    --ink:#f7f8f8; --ink2:#c9ced6; --ink3:#8a8f98;
+    --acc:oklch(0.66 0.16 292); --acc-soft:oklch(0.66 0.16 292 / 0.15);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--canvas); color:var(--ink);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;
+    padding:40px 32px 80px;
+  }
+  h1{font-size:22px; margin:0 0 6px;}
+  p.sub{color:var(--ink3); margin:0 0 36px; max-width:640px;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; max-width:1100px;}
+  a.card{
+    display:block; text-decoration:none; color:inherit;
+    background:var(--s1); border:1px solid var(--hair); border-radius:12px;
+    padding:18px 20px; transition:border-color .15s ease, background .15s ease;
+  }
+  a.card:hover{border-color:var(--acc); background:var(--s2);}
+  .n{font-size:11px; color:var(--acc); font-weight:600; letter-spacing:.02em; margin-bottom:6px;}
+  .t{font-size:16px; font-weight:600; margin-bottom:8px;}
+  .d{font-size:13px; color:var(--ink3); white-space:pre-line;}
+</style>
+</head>
+<body>
+<h1>Odoo Orchestrator — design mockups</h1>
+<p class="sub">Exported from the Claude design canvas referenced in
+<code>odoo-orchestrator-ui-design-principles.md</code>. Click a screen to
+open its static mockup. See <code>README.md</code> in this folder for how
+to treat these relative to the actual implemented code.</p>
+<div class="grid" id="grid"></div>
+<script>
+const screens = [
+  {n:"1 · First run", f:"Main.dc.html", t:"Main", d:"The whole primary job: name it, pick a version, go. No repo, no Git, no config file — those come later and only when asked for."},
+  {n:"2 · Setting up", f:"Progress.dc.html", t:"Progress", d:"Real named stages, and the address and password shown before it's ready. Ends by telling you the next one takes 9 seconds, not 40."},
+  {n:"3 · The centre of the app", f:"Topology.dc.html", t:"Odoo & databases (Topology)", d:"Both topology shapes visible at once: one server holding several databases, and a database with a server to itself."},
+  {n:"4 · A database", f:"WorkspaceDetail.dc.html", t:"Workspace detail", d:"Address, login, password, size, last backup — everything a junior needs on one screen; modules, code and logs are tabs, not the front door."},
+  {n:"5 · New database", f:"NewWorkspace.dc.html", t:"New workspace", d:"The shared-vs-own-server decision is made for you and explained in one sentence, with an escape hatch."},
+  {n:"6 · Engine", f:"Engine.dc.html", t:"Engine", d:"No Docker: bundled Python runtime per Odoo version, a private Postgres, a pinned PDF binary. One folder, no daemon."},
+  {n:"7 · Editor", f:"Editor.dc.html", t:"Editor", d:"The rail answers the two questions you actually have while coding: which database am I hitting, and how do I make this change take effect."},
+];
+document.getElementById("grid").innerHTML = screens.map(s =>
+  `<a class="card" href="${s.f}"><div class="n">${s.n}</div><div class="t">${s.t}</div><div class="d">${s.d}</div></a>`
+).join("");
+</script>
+</body>
+</html>

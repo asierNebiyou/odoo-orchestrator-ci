@@ -1,0 +1,11 @@
+{
+  "name": "odoo-orchestrator-e2e",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Playwright dependency for this repo's root-level e2e_*.mjs scripts, which drive the real running shell binary + frontend dev server through a real browser, plus the Tauri CLI used to build/run the real desktop shell in src-tauri/. Not a package meant to be published or run as an app.",
+  "type": "module",
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "playwright": "^1.61.1"
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "Progress.dc.html",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "Topology.dc.html",
+      "x": 3120,
+      "y": 0,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "WorkspaceDetail.dc.html",
+      "x": 0,
+      "y": 1100,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "NewWorkspace.dc.html",
+      "x": 1560,
+      "y": 1100,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "Engine.dc.html",
+      "x": 3120,
+      "y": 1100,
+      "w": 1440,
+      "h": 900
+    },
+    {
+      "file": "Editor.dc.html",
+      "x": 0,
+      "y": 2200,
+      "w": 1440,
+      "h": 900
+    }
+  ],
+  "annotations": [
+    {
+      "id": "n-welcome",
+      "x": 0,
+      "y": -110,
+      "w": 430,
+      "text": "1 · First run\nThe whole primary job: name it, pick a version, go. No repo, no Git, no config file — those come later and only when asked for."
+    },
+    {
+      "id": "n-setup",
+      "x": 1560,
+      "y": -110,
+      "w": 430,
+      "text": "2 · Setting up\nReal named stages, and the address and password shown before it's ready. Ends by telling you the next one takes 9 seconds, not 40."
+    },
+    {
+      "id": "n-topology",
+      "x": 3120,
+      "y": -110,
+      "w": 430,
+      "text": "3 · Odoo & databases — the centre of the app\nBoth shapes, visible at once: one server holding several databases, and a database with a server to itself. Odoo's addons_path is per-server, so the rule is real, not cosmetic."
+    },
+    {
+      "id": "n-db",
+      "x": 0,
+      "y": 990,
+      "w": 430,
+      "text": "4 · A database\nAddress, login, password, size, last backup. Everything a junior needs on one screen; modules, code and logs are tabs, not the front door."
+    },
+    {
+      "id": "n-new",
+      "x": 1560,
+      "y": 990,
+      "w": 430,
+      "text": "5 · New database\nThe shared-vs-own-server decision is made for you and explained in one sentence, with an escape hatch. Nobody should have to learn addons_path to make a second database."
+    },
+    {
+      "id": "n-engine",
+      "x": 3120,
+      "y": 990,
+      "w": 430,
+      "text": "6 · Engine\nNo Docker: bundled Python runtime per Odoo version, a private Postgres, a pinned PDF binary. One folder, no daemon, no admin password — and an honest note about the one fragile piece."
+    },
+    {
+      "id": "n-editor",
+      "x": 0,
+      "y": 2090,
+      "w": 430,
+      "text": "7 · Editor\nThe rail answers the two questions you actually have while coding: which database am I hitting, and how do I make this change take effect."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

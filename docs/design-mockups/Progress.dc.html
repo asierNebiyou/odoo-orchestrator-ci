@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    :root{
+      --canvas:#08090a; --s1:#0f1011; --s2:#141516; --s3:#1a1b1d;
+      --hair:#212327; --hair2:#2e3036;
+      --ink:#f7f8f8; --ink2:#c9ced6; --ink3:#8a8f98; --ink4:#5f636b;
+      --acc:oklch(0.66 0.16 292); --acc-soft:oklch(0.66 0.16 292 / 0.15); --acc-ink:oklch(0.84 0.10 292);
+      --ok:oklch(0.72 0.15 155); --ok-soft:oklch(0.72 0.15 155 / 0.13);
+      --warn:oklch(0.79 0.13 78); --warn-soft:oklch(0.79 0.13 78 / 0.13);
+      --err:oklch(0.67 0.18 22); --err-soft:oklch(0.67 0.18 22 / 0.13);
+      --run:oklch(0.70 0.13 235); --run-soft:oklch(0.70 0.13 235 / 0.13);
+      --ui:'Geist',ui-sans-serif,system-ui,-apple-system,sans-serif;
+      --mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;}
+    a{color:var(--acc-ink);text-decoration:none;} a:hover{color:var(--acc);}
+    .m{font-family:var(--mono);}
+    .btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--ui);font-size:12.5px;font-weight:500;letter-spacing:-0.008em;padding:8px 13px;border-radius:6px;border:1px solid var(--hair2);background:var(--s2);color:var(--ink);cursor:pointer;white-space:nowrap;}
+    .btn-q{background:transparent;border-color:transparent;color:var(--ink3);}
+    .cap{font-size:10.5px;font-weight:500;letter-spacing:0.07em;color:var(--ink4);text-transform:uppercase;}
+    .stg{display:grid;grid-template-columns:20px 1fr auto;align-items:center;gap:14px;padding:13px 0;}
+  </style>
+</helmet>
+
+<div style="width:100%;height:100%;background:var(--canvas);color:var(--ink);font-family:var(--ui);display:flex;align-items:center;justify-content:center;font-size:13px;letter-spacing:-0.008em;padding:40px;">
+
+  <div style="width:100%;max-width:640px;">
+
+    <div style="margin-bottom:26px;">
+      <h1 style="font-size:26px;font-weight:600;letter-spacing:-0.024em;margin:0 0 8px;">Setting up <span class="m" style="font-weight:500;">acme</span></h1>
+      <p style="font-size:13.5px;color:var(--ink3);margin:0;line-height:1.55;">Odoo 17.0 &middot; step 3 of 4 &middot; about 20 seconds left</p>
+    </div>
+
+    <div style="display:flex;gap:5px;margin-bottom:26px;">
+      <div style="flex:1;height:4px;border-radius:2px;background:var(--ok);"></div>
+      <div style="flex:1;height:4px;border-radius:2px;background:var(--ok);"></div>
+      <div style="flex:1;height:4px;border-radius:2px;background:linear-gradient(90deg, var(--acc) 0%, var(--acc) 55%, var(--hair2) 55%, var(--hair2) 100%);"></div>
+      <div style="flex:1;height:4px;border-radius:2px;background:var(--hair2);"></div>
+    </div>
+
+    <div style="background:var(--s1);border:1px solid var(--hair);border-radius:11px;padding:8px 20px;margin-bottom:16px;">
+
+      <div class="stg">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <div>
+          <div style="font-size:13px;color:var(--ink3);">Downloaded the Odoo 17.0 runtime</div>
+          <div class="m" style="font-size:10.5px;color:var(--ink4);margin-top:2px;">Python 3.11 + dependencies &middot; 280 MB</div>
+        </div>
+        <span class="m" style="font-size:11.5px;color:var(--ink4);">24s</span>
+      </div>
+
+      <div class="stg" style="border-top:1px solid var(--hair);">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <div>
+          <div style="font-size:13px;color:var(--ink3);">Started PostgreSQL</div>
+          <div class="m" style="font-size:10.5px;color:var(--ink4);margin-top:2px;">16.3 &middot; port 54329 &middot; managed by this app only</div>
+        </div>
+        <span class="m" style="font-size:11.5px;color:var(--ink4);">1.8s</span>
+      </div>
+
+      <div class="stg" style="border-top:1px solid var(--hair);background:var(--acc-soft);border-radius:8px;padding-left:12px;padding-right:12px;margin:0 -12px;">
+        <span style="width:17px;height:17px;border-radius:50%;border:2px solid var(--acc);border-top-color:transparent;box-sizing:border-box;"></span>
+        <div>
+          <div style="font-size:13px;color:var(--ink);">Creating the database</div>
+          <div class="m" style="font-size:10.5px;color:var(--acc-ink);margin-top:2px;">installing base modules &middot; 41 of 74</div>
+        </div>
+        <span class="m" style="font-size:11.5px;color:var(--ink3);">11s</span>
+      </div>
+
+      <div class="stg" style="border-top:1px solid var(--hair);">
+        <span style="width:17px;height:17px;border-radius:50%;border:1.5px solid var(--hair2);box-sizing:border-box;"></span>
+        <div>
+          <div style="font-size:13px;color:var(--ink4);">Starting the server</div>
+        </div>
+        <span class="m" style="font-size:11.5px;color:var(--ink4);">~4s</span>
+      </div>
+    </div>
+
+    <!-- WHAT YOU GET, SHOWN BEFORE IT'S READY -->
+    <div style="background:var(--s1);border:1px solid var(--hair);border-radius:11px;padding:18px 20px;margin-bottom:16px;">
+      <div class="cap" style="margin-bottom:14px;">When it's ready</div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12.5px;color:var(--ink3);">Address</span>
+          <span class="m" style="font-size:12.5px;color:var(--ink2);">acme.localhost:8069</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12.5px;color:var(--ink3);">Log in as</span>
+          <span class="m" style="font-size:12.5px;color:var(--ink2);">admin</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12.5px;color:var(--ink3);">Password</span>
+          <div style="display:flex;align-items:center;gap:9px;">
+            <span class="m" style="font-size:12.5px;color:var(--ink2);">admin</span>
+            <button class="btn btn-q" style="padding:3px 7px;font-size:10.5px;">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:9px;font-size:12px;color:var(--ink4);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        <span>The download happens once. Your next Odoo 17.0 database takes about <span class="m" style="color:var(--ink3);">9 seconds</span>.</span>
+      </div>
+      <button class="btn btn-q">Hide &mdash; notify me</button>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script data-dc-script>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

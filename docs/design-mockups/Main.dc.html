@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    :root{
+      --canvas:#08090a; --s1:#0f1011; --s2:#141516; --s3:#1a1b1d;
+      --hair:#212327; --hair2:#2e3036;
+      --ink:#f7f8f8; --ink2:#c9ced6; --ink3:#8a8f98; --ink4:#5f636b;
+      --acc:oklch(0.66 0.16 292); --acc-soft:oklch(0.66 0.16 292 / 0.15); --acc-ink:oklch(0.84 0.10 292);
+      --ok:oklch(0.72 0.15 155); --ok-soft:oklch(0.72 0.15 155 / 0.13);
+      --warn:oklch(0.79 0.13 78); --warn-soft:oklch(0.79 0.13 78 / 0.13);
+      --err:oklch(0.67 0.18 22); --err-soft:oklch(0.67 0.18 22 / 0.13);
+      --run:oklch(0.70 0.13 235); --run-soft:oklch(0.70 0.13 235 / 0.13);
+      --ui:'Geist',ui-sans-serif,system-ui,-apple-system,sans-serif;
+      --mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;}
+    a{color:var(--acc-ink);text-decoration:none;} a:hover{color:var(--acc);}
+    .m{font-family:var(--mono);}
+    .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--ui);font-size:13px;font-weight:500;letter-spacing:-0.008em;padding:10px 16px;border-radius:7px;border:1px solid var(--hair2);background:var(--s2);color:var(--ink);cursor:pointer;white-space:nowrap;}
+    .btn-p{background:var(--acc);border-color:var(--acc);color:#0b0710;}
+    .pick{display:flex;gap:16px;align-items:flex-start;padding:20px;border-radius:11px;border:1px solid var(--hair);background:var(--s1);cursor:pointer;}
+    .pick.on{border-color:oklch(0.66 0.16 292 / 0.55);background:var(--acc-soft);}
+    .ver{display:flex;align-items:center;justify-content:center;padding:9px 0;border-radius:7px;border:1px solid var(--hair2);background:var(--s2);font-family:var(--mono);font-size:12.5px;color:var(--ink2);cursor:pointer;}
+    .ver.on{background:var(--acc);border-color:var(--acc);color:#0b0710;}
+  </style>
+</helmet>
+
+<div style="width:100%;height:100%;background:var(--canvas);color:var(--ink);font-family:var(--ui);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;letter-spacing:-0.008em;padding:40px;">
+
+  <div style="width:100%;max-width:620px;display:flex;flex-direction:column;">
+
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:30px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <circle cx="6" cy="7" r="2.6" fill="oklch(0.66 0.16 292)"></circle>
+        <circle cx="18" cy="7" r="2.6" fill="oklch(0.66 0.16 292)" opacity="0.45"></circle>
+        <circle cx="12" cy="18" r="2.6" fill="oklch(0.66 0.16 292)" opacity="0.75"></circle>
+        <path d="M8.6 7h6.8M7.5 9.4 11 15.6M16.5 9.4 13 15.6" stroke="oklch(0.66 0.16 292)" stroke-width="1.4" stroke-linecap="round" opacity="0.4"></path>
+      </svg>
+      <span style="font-weight:600;font-size:15px;letter-spacing:-0.018em;">Orchestrator</span>
+    </div>
+
+    <h1 style="font-size:34px;font-weight:600;letter-spacing:-0.028em;line-height:1.15;margin:0 0 10px;">Let's get Odoo running.</h1>
+    <p style="font-size:14.5px;color:var(--ink3);line-height:1.6;margin:0 0 30px;max-width:520px;">
+      No Docker, no Postgres install, no config files. Pick a version and a name &mdash; everything else is handled.
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:26px;">
+
+      <div class="pick on">
+        <div style="width:36px;height:36px;border-radius:9px;background:var(--acc);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#0b0710" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:14.5px;font-weight:500;letter-spacing:-0.012em;margin-bottom:4px;">Start a fresh Odoo</div>
+          <div style="font-size:12.5px;color:var(--ink3);line-height:1.55;">A clean database you can log into and start building on. Best if you're learning or starting a new project.</div>
+        </div>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--acc-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:9px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+
+      <div class="pick">
+        <div style="width:36px;height:36px;border-radius:9px;background:var(--s3);border:1px solid var(--hair2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2Z"></path></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:14.5px;font-weight:500;letter-spacing:-0.012em;margin-bottom:4px;">Open a project I already have</div>
+          <div style="font-size:12.5px;color:var(--ink3);line-height:1.55;">Point at a folder or a Git repo. We'll find the modules and pick the matching Odoo version.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:22px;margin-bottom:26px;">
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:500;color:var(--ink3);margin-bottom:9px;">Name it</div>
+        <div style="display:flex;align-items:center;background:var(--s2);border:1px solid var(--hair2);border-radius:7px;padding:11px 13px;font-family:var(--mono);font-size:13px;">
+          acme<span style="width:1.5px;height:15px;background:var(--acc);margin-left:2px;"></span>
+        </div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:500;color:var(--ink3);margin-bottom:9px;">Odoo version</div>
+        <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:7px;">
+          <div class="ver">15.0</div>
+          <div class="ver">16.0</div>
+          <div class="ver on">17.0</div>
+          <div class="ver">18.0</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding-top:22px;border-top:1px solid var(--hair);">
+      <div style="display:flex;align-items:center;gap:9px;font-size:12px;color:var(--ink4);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink4)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span>First run downloads about <span class="m" style="color:var(--ink3);">280 MB</span> &middot; roughly 40 seconds</span>
+      </div>
+      <button class="btn btn-p">
+        Create and start
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script data-dc-script>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

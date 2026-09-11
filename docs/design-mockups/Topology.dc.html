@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    :root{
+      --canvas:#08090a; --s1:#0f1011; --s2:#141516; --s3:#1a1b1d;
+      --hair:#212327; --hair2:#2e3036;
+      --ink:#f7f8f8; --ink2:#c9ced6; --ink3:#8a8f98; --ink4:#5f636b;
+      --acc:oklch(0.66 0.16 292); --acc-soft:oklch(0.66 0.16 292 / 0.15); --acc-ink:oklch(0.84 0.10 292);
+      --ok:oklch(0.72 0.15 155); --ok-soft:oklch(0.72 0.15 155 / 0.13);
+      --warn:oklch(0.79 0.13 78); --warn-soft:oklch(0.79 0.13 78 / 0.13);
+      --err:oklch(0.67 0.18 22); --err-soft:oklch(0.67 0.18 22 / 0.13);
+      --run:oklch(0.70 0.13 235); --run-soft:oklch(0.70 0.13 235 / 0.13);
+      --ui:'Geist',ui-sans-serif,system-ui,-apple-system,sans-serif;
+      --mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;}
+    a{color:var(--acc-ink);text-decoration:none;} a:hover{color:var(--acc);}
+    .m{font-family:var(--mono);}
+    .btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:12.5px;font-weight:500;letter-spacing:-0.008em;padding:7px 12px;border-radius:6px;border:1px solid var(--hair2);background:var(--s2);color:var(--ink);cursor:pointer;white-space:nowrap;}
+    .btn-p{background:var(--acc);border-color:var(--acc);color:#0b0710;}
+    .btn-q{background:transparent;border-color:transparent;color:var(--ink3);}
+    .btn-s{padding:5px 10px;font-size:11.5px;}
+    .nav{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:6px;font-size:13px;color:var(--ink3);letter-spacing:-0.006em;}
+    .nav.on{background:var(--s2);color:var(--ink);}
+    .db{display:grid;grid-template-columns:1fr 190px 78px 150px;align-items:center;gap:14px;padding:11px 16px 11px 30px;border-top:1px solid var(--hair);}
+    .cap{font-size:10.5px;font-weight:500;letter-spacing:0.07em;color:var(--ink4);text-transform:uppercase;}
+  </style>
+</helmet>
+
+<div style="width:100%;height:100%;background:var(--canvas);color:var(--ink);font-family:var(--ui);display:flex;font-size:13px;letter-spacing:-0.008em;">
+
+  <!-- SIDEBAR -->
+  <div style="width:198px;flex-shrink:0;border-right:1px solid var(--hair);background:var(--s1);display:flex;flex-direction:column;padding:16px 12px;">
+    <div style="display:flex;align-items:center;gap:9px;padding:0 6px 18px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <circle cx="6" cy="7" r="2.4" fill="oklch(0.66 0.16 292)"></circle>
+        <circle cx="18" cy="7" r="2.4" fill="oklch(0.66 0.16 292)" opacity="0.45"></circle>
+        <circle cx="12" cy="18" r="2.4" fill="oklch(0.66 0.16 292)" opacity="0.75"></circle>
+        <path d="M8.4 7h7.2M7.4 9.2 11 15.8M16.6 9.2 13 15.8" stroke="oklch(0.66 0.16 292)" stroke-width="1.3" stroke-linecap="round" opacity="0.4"></path>
+      </svg>
+      <span style="font-weight:600;font-size:13.5px;letter-spacing:-0.015em;">Orchestrator</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:2px;">
+      <div class="nav on">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="7" rx="1.5"></rect><rect x="3" y="14" width="18" height="7" rx="1.5"></rect></svg>
+        <span style="flex:1;">Odoo &amp; databases</span>
+      </div>
+      <div class="nav">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"></path><circle cx="12" cy="13" r="3.4"></circle></svg>
+        <span style="flex:1;">Backups</span>
+      </div>
+      <div class="nav">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        <span style="flex:1;">Code</span>
+      </div>
+      <div class="nav">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6h.09A1.65 1.65 0 0 0 10.6 3.09V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg>
+        <span style="flex:1;">Engine</span>
+      </div>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="border-top:1px solid var(--hair);padding-top:12px;display:flex;align-items:center;gap:8px;padding-left:6px;">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0;"></span>
+      <span class="m" style="font-size:10.5px;color:var(--ink4);">postgres 16.3</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 26px 14px;flex-shrink:0;">
+      <div style="display:flex;align-items:baseline;gap:12px;">
+        <span style="font-size:17px;font-weight:600;letter-spacing:-0.018em;">Odoo &amp; databases</span>
+        <span style="font-size:12.5px;color:var(--ink4);">2 servers &middot; 5 databases</span>
+      </div>
+      <div style="display:flex;gap:9px;">
+        <button class="btn">New server</button>
+        <button class="btn btn-p">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          New database
+        </button>
+      </div>
+    </div>
+
+    <!-- THE ONE RULE, IN PLAIN LANGUAGE -->
+    <div style="margin:0 26px 16px;display:flex;align-items:flex-start;gap:11px;background:var(--s1);border:1px solid var(--hair);border-radius:9px;padding:12px 15px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink4)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      <div style="font-size:12.5px;color:var(--ink3);line-height:1.6;">
+        Databases on the same server share one Odoo version and one set of modules &mdash; cheap, and they all start together.
+        <span style="color:var(--ink2);">Need a different Odoo version or different modules? Give it its own server.</span>
+        We pick for you when you add a database, and tell you why.
+      </div>
+    </div>
+
+    <div style="flex:1;overflow:auto;padding:0 26px 26px;display:flex;flex-direction:column;gap:16px;">
+
+      <!-- SERVER 1 : shared -->
+      <div style="background:var(--s1);border:1px solid var(--hair);border-radius:11px;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 16px;">
+          <div style="display:flex;align-items:center;gap:13px;min-width:0;">
+            <div style="width:34px;height:34px;border-radius:8px;background:var(--acc-soft);border:1px solid oklch(0.66 0.16 292 / 0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--acc-ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="8" rx="2"></rect><rect x="2" y="13" width="20" height="8" rx="2"></rect><line x1="6" y1="7" x2="6.01" y2="7"></line><line x1="6" y1="17" x2="6.01" y2="17"></line></svg>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:14px;font-weight:500;letter-spacing:-0.013em;">Odoo 17.0</span>
+                <span style="font-size:10px;font-weight:500;letter-spacing:0.04em;color:var(--acc-ink);background:oklch(0.66 0.16 292 / 0.18);border-radius:4px;padding:2px 7px;">SHARED &middot; 3 DATABASES</span>
+              </div>
+              <span class="m" style="font-size:11px;color:var(--ink4);">port 8069 &middot; 4 custom modules &middot; up 4h 12m</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:11px;flex-shrink:0;">
+            <span style="display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--ok);"><span style="width:7px;height:7px;border-radius:50%;background:var(--ok);"></span>running</span>
+            <button class="btn btn-s">Stop</button>
+            <button class="btn btn-q" style="padding:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.6"></circle><circle cx="19" cy="12" r="1.6"></circle><circle cx="5" cy="12" r="1.6"></circle></svg></button>
+          </div>
+        </div>
+
+        <div class="db">
+          <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0;"></span>
+            <span class="m" style="font-size:12.5px;color:var(--ink);">acme</span>
+            <span style="font-size:11px;color:var(--ink4);">your main work</span>
+          </div>
+          <span class="m" style="font-size:11.5px;color:var(--ink3);">acme.localhost:8069</span>
+          <span class="m" style="font-size:11.5px;color:var(--ink4);">2.4 GB</span>
+          <div style="display:flex;gap:6px;justify-content:flex-end;">
+            <button class="btn btn-s btn-q">Back up</button>
+            <button class="btn btn-s btn-p">Open</button>
+          </div>
+        </div>
+
+        <div class="db">
+          <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0;"></span>
+            <span class="m" style="font-size:12.5px;color:var(--ink);">acme_test</span>
+            <span style="font-size:11px;color:var(--ink4);">copy of acme, demo data on</span>
+          </div>
+          <span class="m" style="font-size:11.5px;color:var(--ink3);">acme_test.localhost:8069</span>
+          <span class="m" style="font-size:11.5px;color:var(--ink4);">2.4 GB</span>
+          <div style="display:flex;gap:6px;justify-content:flex-end;">
+            <button class="btn btn-s btn-q">Back up</button>
+            <button class="btn btn-s">Open</button>
+          </div>
+        </div>
+
+        <div class="db">
+          <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0;"></span>
+            <span class="m" style="font-size:12.5px;color:var(--ink);">playground</span>
+            <span style="font-size:11px;color:var(--ink4);">safe to break</span>
+          </div>
+          <span class="m" style="font-size:11.5px;color:var(--ink3);">playground.localhost:8069</span>
+          <span class="m" style="font-size:11.5px;color:var(--ink4);">840 MB</span>
+          <div style="display:flex;gap:6px;justify-content:flex-end;">
+            <button class="btn btn-s btn-q">Back up</button>
+            <button class="btn btn-s">Open</button>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--hair);padding:10px 16px 10px 30px;">
+          <button class="btn btn-q btn-s"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Add a database here</button>
+        </div>
+      </div>
+
+      <!-- SERVER 2 : own server, different version -->
+      <div style="background:var(--s1);border:1px solid var(--hair);border-radius:11px;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:15px 16px;">
+          <div style="display:flex;align-items:center;gap:13px;min-width:0;">
+            <div style="width:34px;height:34px;border-radius:8px;background:var(--s3);border:1px solid var(--hair2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="8" rx="2"></rect><rect x="2" y="13" width="20" height="8" rx="2"></rect><line x1="6" y1="7" x2="6.01" y2="7"></line><line x1="6" y1="17" x2="6.01" y2="17"></line></svg>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:14px;font-weight:500;letter-spacing:-0.013em;">Odoo 16.0 &mdash; Northwind</span>
+                <span style="font-size:10px;font-weight:500;letter-spacing:0.04em;color:var(--ink4);background:var(--s3);border-radius:4px;padding:2px 7px;">OWN SERVER</span>
+              </div>
+              <span class="m" style="font-size:11px;color:var(--ink4);">port 8070 &middot; 11 custom modules &middot; different version, so it runs alone</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:11px;flex-shrink:0;">
+            <span style="display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--ink3);"><span style="width:7px;height:7px;border-radius:50%;border:1.5px solid var(--ink4);box-sizing:border-box;"></span>stopped</span>
+            <button class="btn btn-s"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21"></polygon></svg>Start</button>
+            <button class="btn btn-q" style="padding:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.6"></circle><circle cx="19" cy="12" r="1.6"></circle><circle cx="5" cy="12" r="1.6"></circle></svg></button>
+          </div>
+        </div>
+
+        <div class="db">
+          <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+            <span style="width:6px;height:6px;border-radius:50%;border:1.5px solid var(--ink4);box-sizing:border-box;flex-shrink:0;"></span>
+            <span class="m" style="font-size:12.5px;color:var(--ink2);">northwind</span>
+            <span style="font-size:11px;color:var(--ink4);">client work</span>
+          </div>
+          <span class="m" style="font-size:11.5px;color:var(--ink4);">northwind.localhost:8070</span>
+          <span class="m" style="font-size:11.5px;color:var(--ink4);">1.9 GB</span>
+          <div style="display:flex;gap:6px;justify-content:flex-end;">
+            <button class="btn btn-s btn-q">Back up</button>
+            <button class="btn btn-s">Start &amp; open</button>
+          </div>
+        </div>
+
+        <div class="db">
+          <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+            <span style="width:6px;height:6px;border-radius:50%;border:1.5px solid var(--ink4);box-sizing:border-box;flex-shrink:0;"></span>
+            <span class="m" style="font-size:12.5px;color:var(--ink2);">northwind_staging</span>
+            <span style="font-size:11px;color:var(--ink4);">restored from client backup</span>
+          </div>
+          <span class="m" style="font-size:11.5px;color:var(--ink4);">northwind_staging.localhost:8070</span>
+          <span class="m" style="font-size:11.5px;color:var(--ink4);">2.1 GB</span>
+          <div style="display:flex;gap:6px;justify-content:flex-end;">
+            <button class="btn btn-s btn-q">Back up</button>
+            <button class="btn btn-s">Start &amp; open</button>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--hair);padding:10px 16px 10px 30px;">
+          <button class="btn btn-q btn-s"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Add a database here</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    :root{
+      --canvas:#08090a; --s1:#0f1011; --s2:#141516; --s3:#1a1b1d;
+      --hair:#212327; --hair2:#2e3036;
+      --ink:#f7f8f8; --ink2:#c9ced6; --ink3:#8a8f98; --ink4:#5f636b;
+      --acc:oklch(0.66 0.16 292); --acc-soft:oklch(0.66 0.16 292 / 0.15); --acc-ink:oklch(0.84 0.10 292);
+      --ok:oklch(0.72 0.15 155); --ok-soft:oklch(0.72 0.15 155 / 0.13);
+      --warn:oklch(0.79 0.13 78); --warn-soft:oklch(0.79 0.13 78 / 0.13);
+      --err:oklch(0.67 0.18 22); --err-soft:oklch(0.67 0.18 22 / 0.13);
+      --run:oklch(0.70 0.13 235); --run-soft:oklch(0.70 0.13 235 / 0.13);
+      --ui:'Geist',ui-sans-serif,system-ui,-apple-system,sans-serif;
+      --mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;}
+    a{color:var(--acc-ink);text-decoration:none;} a:hover{color:var(--acc);}
+    .m{font-family:var(--mono);}
+    .btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--ui);font-size:12.5px;font-weight:500;letter-spacing:-0.008em;padding:7px 12px;border-radius:6px;border:1px solid var(--hair2);background:var(--s2);color:var(--ink);cursor:pointer;white-space:nowrap;}
+    .btn-q{background:transparent;border-color:transparent;color:var(--ink3);}
+    .btn-s{padding:5px 10px;font-size:11.5px;}
+    .card{background:var(--s1);border:1px solid var(--hair);border-radius:11px;}
+    .cap{font-size:10.5px;font-weight:500;letter-spacing:0.07em;color:var(--ink4);text-transform:uppercase;}
+    .comp{display:grid;grid-template-columns:30px 1fr 130px 96px 92px;align-items:center;gap:14px;padding:14px 18px;border-top:1px solid var(--hair);}
+  </style>
+</helmet>
+
+<div style="width:100%;height:100%;background:var(--canvas);color:var(--ink);font-family:var(--ui);display:flex;flex-direction:column;font-size:13px;letter-spacing:-0.008em;">
+
+  <div style="padding:20px 26px 16px;flex-shrink:0;">
+    <div style="font-size:17px;font-weight:600;letter-spacing:-0.018em;margin-bottom:5px;">Engine</div>
+    <div style="font-size:12.5px;color:var(--ink3);">What's actually running on your machine, and where it lives.</div>
+  </div>
+
+  <div style="flex:1;overflow:auto;padding:0 26px 26px;display:flex;flex-direction:column;gap:16px;">
+
+    <!-- THE PROMISE -->
+    <div class="card" style="padding:18px 20px;display:flex;align-items:center;gap:20px;">
+      <div style="width:38px;height:38px;border-radius:9px;background:var(--ok-soft);border:1px solid oklch(0.72 0.15 155 / 0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path></svg>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:13.5px;font-weight:500;letter-spacing:-0.012em;margin-bottom:4px;">No Docker. Nothing installed system-wide.</div>
+        <div style="font-size:12px;color:var(--ink3);line-height:1.55;">
+          Everything below is a plain program in one folder that this app starts and stops. No daemon, no virtual machine, no admin password, no changes to your system Python or Postgres.
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div class="m" style="font-size:17px;color:var(--ink2);letter-spacing:-0.02em;">3.1 GB</div>
+        <div style="font-size:10.5px;color:var(--ink4);">total on disk</div>
+      </div>
+    </div>
+
+    <!-- COMPONENTS -->
+    <div class="card" style="overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px;">
+        <span class="cap">Components</span>
+        <button class="btn btn-q btn-s">Check for updates</button>
+      </div>
+
+      <div class="comp">
+        <div style="width:30px;height:30px;border-radius:7px;background:var(--acc-soft);display:flex;align-items:center;justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--acc-ink)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="8" rx="2"></rect><rect x="2" y="13" width="20" height="8" rx="2"></rect></svg>
+        </div>
+        <div>
+          <div style="font-size:12.5px;">Odoo 17.0 runtime</div>
+          <div class="m" style="font-size:10.5px;color:var(--ink4);margin-top:2px;">Python 3.11.9 &middot; 62 packages &middot; used by 3 databases</div>
+        </div>
+        <span class="m" style="font-size:11.5px;color:var(--ink3);">17.0 &middot; latest</span>
+        <span class="m" style="font-size:11.5px;color:var(--ink4);">1.1 GB</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--ok);justify-content:flex-end;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);"></span>running</span>
+      </div>
+
+      <div class="comp">
+        <div style="width:30px;height:30px;border-radius:7px;background:var(--s3);display:flex;align-items:center;justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="8" rx="2"></rect><rect x="2" y="13" width="20" height="8" rx="2"></rect></svg>
+        </div>
+        <div>
+          <div style="font-size:12.5px;">Odoo 16.0 runtime</div>
+          <div class="m" style="font-size:10.5px;color:var(--ink4);margin-top:2px;">Python 3.10.14 &middot; 59 packages &middot; used by 2 databases</div>
+        </div>
+        <span class="m" style="font-size:11.5px;color:var(--ink3);">16.0 &middot; latest</span>
+        <span class="m" style="font-size:11.5px;color:var(--ink4);">1.0 GB</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--ink4);justify-content:flex-end;"><span style="width:6px;height:6px;border-radius:50%;border:1.5px solid var(--ink4);box-sizing:border-box;"></span>idle</span>
+      </div>
+
+      <div class="comp">
+        <div style="width:30px;height:30px;border-radius:7px;background:var(--s3);display:flex;align-items:center;justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M20 12c0 1.66-3.58 3-8 3s-8-1.34-8-3"></path><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"></path></svg>
+        </div>
+        <div>
+          <div style="font-size:12.5px;">PostgreSQL</div>
+          <div class="m" style="font-size:10.5px;color:var(--ink4);margin-top:2px;">port 54329 &middot; private to this app &middot; your system Postgres is untouched</div>
+        </div>
+        <span class="m" style="font-size:11.5px;color:var(--ink3);">16.3</span>
+        <span class="m" style="font-size:11.5px;color:var(--ink4);">9.7 GB data</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--ok);justify-content:flex-end;"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);"></span>running</span>
+      </div>
+
+      <div class="comp">
+        <div style="width:30px;height:30px;border-radius:7px;background:var(--warn-soft);display:flex;align-items:center;justify-content:center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:9px;">
+            <span style="font-size:12.5px;">PDF renderer</span>
+            <span style="font-size:9.5px;font-weight:500;letter-spacing:0.04em;color:var(--warn);background:var(--warn-soft);border-radius:4px;padding:2px 6px;">PINNED</span>
+          </div>
+          <div class="m" style="font-size:10.5px;color:var(--ink4);margin-top:2px;">wkhtmltopdf &mdash; the build Odoo needs for report headers and footers</div>
+        </div>
+        <span class="m" style="font-size:11.5px;color:var(--ink3);">0.12.6.1</span>
+        <span class="m" style="font-size:11.5px;color:var(--ink4);">64 MB</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;color:var(--ink4);justify-content:flex-end;">on demand</span>
+      </div>
+    </div>
+
+    <!-- HONEST NOTE ABOUT THE ONE FRAGILE PIECE -->
+    <div style="display:flex;align-items:flex-start;gap:11px;background:var(--s1);border:1px solid var(--hair);border-radius:9px;padding:13px 16px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      <div style="font-size:12px;color:var(--ink3);line-height:1.6;">
+        <span style="color:var(--ink2);">wkhtmltopdf is no longer maintained upstream.</span> Odoo still requires it for PDF reports, so we ship a known-good build and keep it pinned. On Apple Silicon it runs under Rosetta. We'll switch when Odoo's replacement engine ships. <a href="#">More</a>
+      </div>
+    </div>
+
+    <!-- LOCATION -->
+    <div class="card" style="padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;">
+      <div style="min-width:0;">
+        <div class="cap" style="margin-bottom:7px;">Everything lives here</div>
+        <div class="m" style="font-size:12.5px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">~/Library/Application Support/Orchestrator</div>
+        <div style="font-size:11.5px;color:var(--ink4);margin-top:6px;">Delete that folder and every trace of this is gone.</div>
+      </div>
+      <div style="display:flex;gap:9px;flex-shrink:0;">
+        <button class="btn">Reveal in Finder</button>
+        <button class="btn btn-q">Free up space&hellip;</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script data-dc-script>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

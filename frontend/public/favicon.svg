@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <!-- The same mark as the in-app Logo: three nodes, one orchestrator. -->
+  <circle cx="6" cy="7" r="2.4" fill="#8b5cf6"/>
+  <circle cx="18" cy="7" r="2.4" fill="#8b5cf6" opacity="0.45"/>
+  <circle cx="12" cy="18" r="2.4" fill="#8b5cf6" opacity="0.75"/>
+  <path d="M8.4 7h7.2M7.4 9.2 11 15.8M16.6 9.2 13 15.8" stroke="#8b5cf6" stroke-width="1.3" stroke-linecap="round" opacity="0.4" fill="none"/>
+</svg>

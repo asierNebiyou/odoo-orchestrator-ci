@@ -1,0 +1,606 @@
+/* Design tokens and primitives — the values from the design canvas in
+   `docs/design-mockups/`: button padding, card radius, row grids, the tab
+   underline, 13px body density, radii 4/6/10-11.
+
+   Backing rationale in `docs/odoo-orchestrator-ui-design-principles.md`:
+   elevation by lightness in ~5-hex-point steps, hairline borders rather
+   than shadows (shadows only on true overlays), never #000 and never #fff
+   text, saturated colour reserved for state and danger.
+
+   Accent: violet, OKLCH 292. The rule it has to satisfy is that the accent
+   is never mistakable for a status signal, measured as hue distance from
+   the four semantic hues (err 22, warn 78, ok 155, run 235); 292 sits 57
+   degrees clear of the nearest.
+
+   The only place a gradient appears is the primary button — a single
+   subtle vertical shade so it reads as raised rather than flat. Everything
+   else is solid. */
+
+:root {
+  --canvas: #08090a;
+  --s1: #0f1011;
+  --s2: #141516;
+  --s3: #1a1b1d;
+  --hair: #212327;
+  --hair2: #2e3036;
+
+  --ink: #f7f8f8;
+  --ink2: #c9ced6;
+  --ink3: #8a8f98;
+  --ink4: #5f636b;
+
+  --acc: oklch(0.66 0.16 292);
+  --acc-hi: oklch(0.71 0.16 292);
+  --acc-lo: oklch(0.61 0.16 292);
+  --acc-soft: oklch(0.66 0.16 292 / 0.15);
+  --acc-line: oklch(0.66 0.16 292 / 0.3);
+  --acc-fill: oklch(0.66 0.16 292 / 0.18);
+  --acc-ink: oklch(0.84 0.1 292);
+  --on-acc: #0b0710;
+
+  --ok: oklch(0.72 0.15 155);
+  --ok-soft: oklch(0.72 0.15 155 / 0.13);
+  --warn: oklch(0.79 0.13 78);
+  --warn-soft: oklch(0.79 0.13 78 / 0.13);
+  --err: oklch(0.67 0.18 22);
+  --err-soft: oklch(0.67 0.18 22 / 0.13);
+  --run: oklch(0.7 0.13 235);
+  --run-soft: oklch(0.7 0.13 235 / 0.13);
+
+  /* Overlays only: ring, then shadow with negative spread. */
+  --shadow-pop: 0 0 0 1px var(--hair2), 0 8px 16px -4px rgba(0, 0, 0, 0.4),
+    0 28px 44px -10px rgba(0, 0, 0, 0.6);
+
+  --ui: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --canvas: #f7f7f8;
+  --s1: #ffffff;
+  --s2: #f2f2f4;
+  --s3: #eaeaed;
+  --hair: #e5e5e9;
+  --hair2: #d4d5da;
+
+  --ink: #16171a;
+  --ink2: #3f434a;
+  --ink3: #6b7078;
+  --ink4: #9aa0a8;
+
+  --acc: oklch(0.5 0.2 292);
+  --acc-hi: oklch(0.55 0.2 292);
+  --acc-lo: oklch(0.46 0.2 292);
+  --acc-soft: oklch(0.5 0.2 292 / 0.1);
+  --acc-line: oklch(0.5 0.2 292 / 0.28);
+  --acc-fill: oklch(0.5 0.2 292 / 0.12);
+  --acc-ink: oklch(0.44 0.19 292);
+  --on-acc: #ffffff;
+
+  --ok: oklch(0.52 0.15 155);
+  --ok-soft: oklch(0.52 0.15 155 / 0.1);
+  --warn: oklch(0.58 0.13 78);
+  --warn-soft: oklch(0.58 0.13 78 / 0.12);
+  --err: oklch(0.55 0.19 22);
+  --err-soft: oklch(0.55 0.19 22 / 0.1);
+  --run: oklch(0.52 0.14 235);
+  --run-soft: oklch(0.52 0.14 235 / 0.1);
+
+  --shadow-pop: 0 0 0 1px var(--hair2), 0 8px 16px -4px rgba(20, 20, 30, 0.1),
+    0 28px 44px -10px rgba(20, 20, 30, 0.14);
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 13px;
+  letter-spacing: -0.008em;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--acc-ink);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--acc);
+}
+
+/* Monospace for every machine-generated value: ports, database names,
+   versions, sizes, paths, timestamps, counts. */
+.m {
+  font-family: var(--mono);
+}
+
+.cap {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  color: var(--ink4);
+  text-transform: uppercase;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: -0.008em;
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--hair2);
+  background: var(--s2);
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.12s ease-out, border-color 0.12s ease-out, color 0.12s ease-out;
+}
+.btn:hover:not(:disabled) {
+  background: var(--s3);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* The one gradient in the system: a subtle vertical shade on the primary
+   button so it sits slightly proud of the surface. Two steps of the same
+   hue, nothing multi-colour. */
+.btn-p {
+  background: linear-gradient(180deg, var(--acc-hi), var(--acc-lo));
+  border-color: var(--acc-lo);
+  color: var(--on-acc);
+  font-weight: 510;
+}
+.btn-p:hover:not(:disabled) {
+  background: linear-gradient(180deg, var(--acc), var(--acc-lo));
+  border-color: var(--acc-lo);
+}
+
+.btn-q {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink3);
+}
+.btn-q:hover:not(:disabled) {
+  background: var(--s2);
+  color: var(--ink);
+}
+.btn-s {
+  padding: 5px 10px;
+  font-size: 11.5px;
+}
+/* Confirm dialogs only — the design doc keeps Delete/Drop out of any
+   primary action row, so nothing in a row wears this. */
+.btn-danger {
+  background: var(--err);
+  border-color: var(--err);
+  color: #fff;
+  font-weight: 510;
+}
+.btn-icon {
+  padding: 5px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--ink3);
+  letter-spacing: -0.006em;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-family: var(--ui);
+  transition: background-color 0.12s ease-out, color 0.12s ease-out;
+}
+.nav:hover {
+  color: var(--ink2);
+}
+.nav.on {
+  background: var(--s2);
+  color: var(--ink);
+}
+
+.card {
+  background: var(--s1);
+  border: 1px solid var(--hair);
+  border-radius: 11px;
+  transition: border-color 0.12s ease-out;
+}
+/* A card that is itself a click target gets a border change on hover —
+   no lift, no shadow. */
+.card-live {
+  cursor: pointer;
+}
+.card-live:hover {
+  border-color: var(--hair2);
+}
+
+/* Label/value pairs inside a card. */
+.kv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--hair);
+}
+.kv:last-child {
+  border-bottom: none;
+}
+
+.tab {
+  padding: 0 2px 10px;
+  font-size: 12.5px;
+  color: var(--ink3);
+  border: none;
+  border-bottom: 1.5px solid transparent;
+  background: transparent;
+  letter-spacing: -0.008em;
+  cursor: pointer;
+  font-family: var(--ui);
+  white-space: nowrap;
+  transition: color 0.12s ease-out;
+}
+.tab:hover {
+  color: var(--ink2);
+}
+.tab.on {
+  color: var(--ink);
+  border-bottom-color: var(--acc);
+}
+
+/* Database rows under an Odoo — column-aligned like `docker ps` output.
+   Below 860px the columns stack, because the real viewport is often a
+   ~700-800px column docked beside an editor. */
+.db {
+  display: grid;
+  grid-template-columns: 1fr 190px 78px 150px;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 16px 11px 30px;
+  border-top: 1px solid var(--hair);
+  transition: background-color 0.12s ease-out;
+}
+.db:hover {
+  background: var(--s2);
+}
+
+/* Rows carrying one more action (Duplicate) need a wider action column. */
+.db-wide {
+  grid-template-columns: 1fr 180px 70px 232px;
+}
+
+@media (max-width: 1100px) {
+  .db-wide {
+    grid-template-columns: 1fr 150px 232px;
+  }
+  .db-wide > :nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .db,
+  .db-wide {
+    grid-template-columns: 1fr auto;
+    row-gap: 6px;
+    padding-left: 22px;
+  }
+  .db > :nth-child(2),
+  .db-wide > :nth-child(2) {
+    grid-column: 1 / -1;
+  }
+  .db-wide > :nth-child(3) {
+    display: block;
+  }
+}
+
+/* The all-databases table: checkbox · name · project · Odoo · address ·
+   size · protection · last backup. Same column-aligned convention as .db
+   above, one level wider because this one spans every project. */
+.drow {
+  display: grid;
+  grid-template-columns: 26px minmax(120px, 1.3fr) minmax(80px, 0.9fr) minmax(90px, 1fr) minmax(110px, 1.1fr) 66px 108px 84px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--hair);
+  transition: background-color 0.12s ease-out;
+}
+.drow:hover:not(.drow-head) {
+  background: var(--s2);
+}
+.drow-head {
+  border-top: none;
+  padding-top: 13px;
+  padding-bottom: 11px;
+}
+
+@media (max-width: 1180px) {
+  .drow {
+    grid-template-columns: 26px minmax(120px, 1.4fr) minmax(80px, 1fr) minmax(110px, 1.1fr) 66px 108px;
+  }
+  /* Odoo and last-backup fold away first: both are recoverable by
+     opening the database, unlike its address or whether it's protected. */
+  .drow > :nth-child(4),
+  .drow > :nth-child(8) {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .drow {
+    grid-template-columns: 26px 1fr 108px;
+  }
+  .drow > :nth-child(3),
+  .drow > :nth-child(5),
+  .drow > :nth-child(6) {
+    display: none;
+  }
+}
+
+/* One horizontal bar broken into measured segments — the disk breakdown
+   on Stats. Segments carry their own colour inline because each names a
+   different kind of thing, not a different severity. */
+.bar {
+  display: flex;
+  height: 12px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--s3);
+}
+.bar > span {
+  height: 100%;
+}
+
+/* A measured fact with its own sample size. The number is large, the
+   provenance directly under it, because a median with no n is a rumour. */
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fact-n {
+  font-size: 19px;
+  font-weight: 590;
+  letter-spacing: -0.02em;
+  font-family: var(--mono);
+}
+
+/* Settings groups: a titled block of rows. */
+.set {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 18px;
+}
+.set-t {
+  font-size: 13.5px;
+  font-weight: 570;
+  letter-spacing: -0.01em;
+}
+.set-d {
+  font-size: 12.5px;
+  color: var(--ink3);
+  margin-bottom: 8px;
+}
+
+/* Activity's destructive lane — a left rule in the danger hue, so the
+   rows you actually scan a log for are findable without reading it. */
+.ev-danger {
+  box-shadow: inset 2px 0 0 var(--err);
+  background: var(--err-soft);
+}
+
+/* Engine's component row. */
+.comp {
+  display: grid;
+  grid-template-columns: 30px 1fr 130px 96px 92px;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--hair);
+}
+
+/* A staged-progress row. */
+.stg {
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 0;
+}
+
+.segtrack {
+  display: flex;
+  gap: 6px;
+  background: var(--s2);
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  padding: 4px;
+}
+.seg {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 0;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--ink3);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: var(--ui);
+  /* A two-word filter label wrapping mid-chip makes the whole track
+     taller than the controls beside it. */
+  white-space: nowrap;
+}
+.seg:hover {
+  color: var(--ink2);
+}
+.seg.on {
+  background: var(--s3);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--hair2);
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--s2);
+  border: 1px solid var(--hair2);
+  border-radius: 7px;
+  padding: 11px 13px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.12s ease-out;
+}
+.field:focus {
+  border-color: var(--acc);
+}
+.field::placeholder {
+  color: var(--ink4);
+}
+
+/* Status = colour + shape + text (Carbon), never colour alone. Running is
+   filled, stopped is a hollow ring, starting/stopping spins, and a crash
+   carries its real exit code in the adjacent label. */
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.dot-run {
+  background: var(--ok);
+}
+.dot-stop {
+  background: transparent;
+  border: 1.5px solid var(--ink4);
+}
+.dot-busy {
+  background: transparent;
+  border: 1.5px solid var(--run);
+  border-top-color: transparent;
+  animation: spin 0.7s linear infinite;
+}
+.dot-err {
+  background: var(--err);
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--acc-ink);
+  background: var(--acc-fill);
+  border-radius: 4px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+.badge-quiet {
+  color: var(--ink3);
+  background: var(--s2);
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+
+/* 34px icon tile, tinted by its project's swatch. */
+.tile {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--swatch, var(--acc)) 15%, transparent);
+  border: 1px solid color-mix(in oklch, var(--swatch, var(--acc)) 30%, transparent);
+  color: var(--swatch, var(--acc-ink));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Six fixed project swatches, stored per project rather than hashed from
+   the name, so a rename never re-colours one someone finds by colour. */
+.sw0 { --swatch: oklch(0.66 0.16 292); }
+.sw1 { --swatch: oklch(0.7 0.13 235); }
+.sw2 { --swatch: oklch(0.72 0.15 155); }
+.sw3 { --swatch: oklch(0.79 0.13 78); }
+.sw4 { --swatch: oklch(0.67 0.18 22); }
+.sw5 { --swatch: oklch(0.72 0.12 330); }
+
+.meter {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--s3);
+  overflow: hidden;
+  display: flex;
+}
+.meter-fill {
+  border-radius: 2px;
+  transition: width 0.2s ease-out;
+}
+.meter-fill.full {
+  background: var(--ok);
+}
+.meter-fill.part {
+  background: var(--warn);
+}
+
+.scroll {
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hair2) transparent;
+}
+
+/* Carried over for the two screens that predate the rebuild. */
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.stat-value {
+  font-size: 24px;
+  font-weight: 590;
+  letter-spacing: -0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

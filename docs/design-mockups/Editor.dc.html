@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    :root{
+      --canvas:#08090a; --s1:#0f1011; --s2:#141516; --s3:#1a1b1d;
+      --hair:#212327; --hair2:#2e3036;
+      --ink:#f7f8f8; --ink2:#c9ced6; --ink3:#8a8f98; --ink4:#5f636b;
+      --acc:oklch(0.66 0.16 292); --acc-soft:oklch(0.66 0.16 292 / 0.15); --acc-ink:oklch(0.84 0.10 292);
+      --ok:oklch(0.72 0.15 155); --ok-soft:oklch(0.72 0.15 155 / 0.13);
+      --warn:oklch(0.79 0.13 78); --warn-soft:oklch(0.79 0.13 78 / 0.13);
+      --err:oklch(0.67 0.18 22); --err-soft:oklch(0.67 0.18 22 / 0.13);
+      --run:oklch(0.70 0.13 235); --run-soft:oklch(0.70 0.13 235 / 0.13);
+      --kw:oklch(0.76 0.13 300); --str:oklch(0.76 0.13 152); --dec:oklch(0.76 0.11 210); --cmt:#5f636b;
+      --ui:'Geist',ui-sans-serif,system-ui,-apple-system,sans-serif;
+      --mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;}
+    a{color:var(--acc-ink);text-decoration:none;}
+    .m{font-family:var(--mono);}
+    .btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--ui);font-size:12px;font-weight:500;letter-spacing:-0.008em;padding:5px 10px;border-radius:6px;border:1px solid var(--hair2);background:var(--s2);color:var(--ink);cursor:pointer;white-space:nowrap;}
+    .btn-q{background:transparent;border-color:transparent;color:var(--ink3);}
+    .ti{display:flex;align-items:center;gap:7px;padding:4px 8px;border-radius:5px;font-size:12.5px;color:var(--ink3);white-space:nowrap;letter-spacing:-0.008em;}
+    .ti.on{background:var(--s3);color:var(--ink);}
+    .tab{display:flex;align-items:center;gap:8px;padding:0 14px;height:36px;font-size:12.5px;color:var(--ink4);border-right:1px solid var(--hair);flex-shrink:0;letter-spacing:-0.008em;}
+    .tab.on{color:var(--ink);background:var(--canvas);}
+    .cap{font-size:10px;font-weight:500;letter-spacing:0.08em;color:var(--ink4);text-transform:uppercase;}
+    .ln{color:#3a3d43;display:inline-block;width:26px;text-align:right;margin-right:18px;user-select:none;}
+  </style>
+</helmet>
+
+<div style="width:100%;height:100%;background:var(--canvas);color:var(--ink);font-family:var(--ui);display:flex;flex-direction:column;font-size:13px;letter-spacing:-0.008em;">
+
+  <!-- TITLE BAR -->
+  <div style="display:flex;align-items:center;justify-content:space-between;height:40px;padding:0 14px;border-bottom:1px solid var(--hair);background:var(--s1);flex-shrink:0;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="btn btn-q" style="padding:5px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+      <span class="m" style="font-size:11.5px;color:var(--ink3);">acme-retail <span style="color:var(--ink4);">/</span> private <span style="color:var(--ink4);">/</span> acme_pos_customizations</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11.5px;color:var(--ink4);">&#8984;K</span>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;min-height:0;">
+
+    <!-- EXPLORER, grouped by provenance -->
+    <div style="width:224px;flex-shrink:0;border-right:1px solid var(--hair);background:var(--s1);overflow:auto;padding:12px 8px;">
+      <div class="cap" style="padding:2px 8px 10px;">Explorer</div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 8px;">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--acc);flex-shrink:0;"></span>
+        <span class="m" style="font-size:11.5px;color:var(--ink2);">private/</span>
+      </div>
+      <div style="padding-left:14px;">
+        <div class="ti"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg><span class="m" style="font-size:11.5px;">acme_pos_customizations</span></div>
+        <div style="padding-left:14px;">
+          <div class="ti"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg><span class="m" style="font-size:11.5px;">models</span></div>
+          <div class="ti on" style="margin-left:16px;"><span class="m" style="font-size:11.5px;">pos_order.py</span></div>
+          <div class="ti" style="margin-left:16px;"><span class="m" style="font-size:11.5px;">__init__.py</span></div>
+          <div class="ti"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg><span class="m" style="font-size:11.5px;">views</span></div>
+          <div class="ti" style="margin-left:16px;"><span class="m" style="font-size:11.5px;">__manifest__.py</span></div>
+        </div>
+        <div class="ti"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg><span class="m" style="font-size:11.5px;">acme_delivery_rules</span></div>
+        <div class="ti"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg><span class="m" style="font-size:11.5px;">sale_order_extra</span></div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 8px;margin-top:6px;">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--run);flex-shrink:0;"></span>
+        <span class="m" style="font-size:11.5px;color:var(--ink3);">oca/</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 8px;">
+        <span style="width:6px;height:6px;border-radius:50%;background:var(--ink4);flex-shrink:0;"></span>
+        <span class="m" style="font-size:11.5px;color:var(--ink3);">core/</span>
+      </div>
+    </div>
+
+    <!-- EDITOR -->
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+
+      <div style="display:flex;height:36px;border-bottom:1px solid var(--hair);background:var(--s1);flex-shrink:0;">
+        <div class="tab on"><span class="m" style="font-size:11.5px;">pos_order.py</span><span style="width:5px;height:5px;border-radius:50%;background:var(--ink4);"></span></div>
+        <div class="tab"><span class="m" style="font-size:11.5px;">pos_order_view.xml</span></div>
+        <div class="tab"><span class="m" style="font-size:11.5px;">__manifest__.py</span></div>
+      </div>
+
+      <div style="flex:1;overflow:auto;padding:16px 0 16px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.8;">
+        <div><span class="ln">1</span><span style="color:var(--kw);">from</span> odoo <span style="color:var(--kw);">import</span> models, fields, api</div>
+        <div><span class="ln">2</span></div>
+        <div><span class="ln">3</span></div>
+        <div><span class="ln">4</span><span style="color:var(--kw);">class</span> <span style="color:var(--dec);">PosOrder</span>(models.Model):</div>
+        <div><span class="ln">5</span>    _inherit = <span style="color:var(--str);">"pos.order"</span></div>
+        <div><span class="ln">6</span></div>
+        <div><span class="ln">7</span>    acme_gift_card_code = fields.Char(</div>
+        <div><span class="ln">8</span>        string=<span style="color:var(--str);">"Gift Card Code"</span>,</div>
+        <div><span class="ln">9</span>        help=<span style="color:var(--str);">"Scanned or entered gift card reference"</span>,</div>
+        <div><span class="ln">10</span>    )</div>
+        <div><span class="ln">11</span></div>
+        <div><span class="ln">12</span>    <span style="color:var(--dec);">@api.model</span></div>
+        <div><span class="ln">13</span>    <span style="color:var(--kw);">def</span> <span style="color:var(--dec);">_order_fields</span>(<span style="color:var(--ink3);">self</span>, ui_order):</div>
+        <div><span class="ln">14</span>        vals = <span style="color:var(--ink3);">super</span>()._order_fields(ui_order)</div>
+        <div><span class="ln">15</span>        vals[<span style="color:var(--str);">"acme_gift_card_code"</span>] = ui_order.get(<span style="color:var(--str);">"gift_card_code"</span>)</div>
+        <div><span class="ln">16</span>        <span style="color:var(--kw);">return</span> vals</div>
+        <div><span class="ln">17</span></div>
+        <div><span class="ln">18</span><span style="color:var(--cmt);"># hot reload picks this up on save</span></div>
+      </div>
+
+      <div style="height:138px;border-top:1px solid var(--hair);background:var(--s1);flex-shrink:0;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--hair);">
+          <span class="cap">Terminal &middot; acme_retail_17</span>
+          <span style="font-size:11px;color:var(--ink4);">bash</span>
+        </div>
+        <div style="flex:1;overflow:auto;padding:9px 14px;font-family:var(--mono);font-size:11.5px;line-height:1.75;background:#0b0c0d;">
+          <div style="color:var(--ink4);">acme-retail <span style="color:var(--acc-ink);">main</span> ~ $ click-odoo-update -d acme_retail_17</div>
+          <div style="color:var(--ink3);">INFO  1 module changed since last run</div>
+          <div style="color:var(--ok);">OK    acme_pos_customizations &rarr; 17.0.1.4  (1.2s)</div>
+          <div style="color:var(--ink4);">acme-retail <span style="color:var(--acc-ink);">main</span> ~ $ <span style="display:inline-block;width:6px;height:12px;background:var(--acc);vertical-align:-1px;"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTEXT RAIL : you always know what you are running against -->
+    <div style="width:230px;flex-shrink:0;border-left:1px solid var(--hair);background:var(--s1);padding:14px;display:flex;flex-direction:column;gap:14px;">
+      <div class="cap">Running against</div>
+
+      <div style="background:var(--s2);border:1px solid var(--hair);border-radius:9px;padding:13px;display:flex;flex-direction:column;gap:9px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12.5px;font-weight:500;">Acme Retail</span>
+          <span style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10.5px;color:var(--ok);"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);"></span>running</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:11px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink4);">branch</span><span style="color:var(--ink2);">main</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink4);">database</span><span style="color:var(--ink2);">acme_retail_17</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink4);">odoo</span><span style="color:var(--ink2);">17.0</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--ink4);">port</span><span style="color:var(--ink2);">:8069</span></div>
+        </div>
+      </div>
+
+      <!-- the core dev loop action -->
+      <div style="background:var(--acc-soft);border:1px solid oklch(0.66 0.16 292 / 0.35);border-radius:9px;padding:12px 13px;display:flex;flex-direction:column;gap:9px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--acc);flex-shrink:0;"></span>
+          <span style="font-size:11.5px;color:var(--ink);">1 file changed</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink3);line-height:1.5;">Python changes need a module update to take effect.</div>
+        <button class="btn" style="justify-content:center;background:var(--acc);border-color:var(--acc);color:#0b0710;padding:6px 8px;font-size:11.5px;">Apply changes &middot; ~2s</button>
+      </div>
+
+      <div style="background:var(--s2);border:1px solid var(--hair);border-radius:9px;padding:12px 13px;display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path></svg>
+          <span style="font-size:11.5px;color:var(--ink2);">Backed up 12m ago</span>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn" style="flex:1;justify-content:center;padding:5px 8px;font-size:11px;">Back up</button>
+          <button class="btn" style="flex:1;justify-content:center;padding:5px 8px;font-size:11px;">Restore</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div style="height:26px;flex-shrink:0;background:var(--s2);border-top:1px solid var(--hair);display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-family:var(--mono);font-size:10.5px;color:var(--ink3);">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span style="display:flex;align-items:center;gap:6px;color:var(--ok);"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);"></span>acme_retail_17</span>
+      <span>main</span>
+      <span>17.0</span>
+      <span style="color:var(--ink4);">:8069</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span style="color:var(--ink4);">Ln 15, Col 62</span>
+      <span style="color:var(--ink4);">Python</span>
+      <span style="color:var(--ink4);">UTF-8</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script>
+class Component extends DCLogic {}
+</script>
+</body>
+</html>

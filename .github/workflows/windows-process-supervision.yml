@@ -1,0 +1,53 @@
+name: Windows process supervision
+
+# The one thing this project never had: a real Windows machine. `odoo.rs`
+# implements graceful-stop and liveness-checking via `taskkill`/`tasklist`
+# (see its module doc comment) because the Unix path used `kill`, and until
+# this workflow existed that implementation had only ever been read, never
+# run — see odoo-orchestrator-whats-next.md section 2.2.
+#
+# The tests this runs don't need Odoo or Postgres at all: `odoo.rs`'s own
+# test module stands in a plain Python HTTP server for `odoo-bin`, because
+# what's under test is process supervision (spawn, stop, crash-detect,
+# force-kill escalation), not Odoo. That's what makes a bare windows-latest
+# runner — no Odoo checkout, no Postgres install — enough to genuinely
+# exercise the Windows-specific code path end to end: start the stand-in,
+# ask it to stop, and confirm the OS really doesn't have it anymore.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      # windows-latest ships Python, but as `python.exe` — there is no
+      # `python3` on PATH the way Unix runners have one. The test helper
+      # that picks a Python to spawn as the stand-in server now tries both
+      # names (see `odoo::tests::python3`); this step is just confirming
+      # what's actually there, so a missing interpreter fails loudly here
+      # rather than as a confusing panic three layers down.
+      - name: Confirm a Python 3 is on PATH
+        run: python --version
+
+      - name: cargo test -p orchestrator-core (process supervision)
+        working-directory: src-tauri
+        # Scoped to the module that owns the Windows-specific stop/liveness
+        # code (`odoo::tests`) plus the process-usage helper it shares a
+        # file with. The rest of the crate's tests need a real Postgres
+        # and/or a real Odoo checkout that this runner deliberately doesn't
+        # have — they detect that and skip themselves (see
+        # `core_with_running_postgres_and_server`), so running the whole
+        # crate here would mostly just prove those skips work, not
+        # anything about Windows.
+        run: cargo test -p orchestrator-core --lib odoo:: -- --nocapture

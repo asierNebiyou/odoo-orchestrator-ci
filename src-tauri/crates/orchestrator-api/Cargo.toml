@@ -1,0 +1,27 @@
+[package]
+name = "orchestrator-api"
+version.workspace = true
+edition.workspace = true
+description = "Local HTTP+WebSocket API over orchestrator-core — the single source of truth the shell UI, editor sidecar, and future plugins all talk to."
+
+[dependencies]
+orchestrator-core = { path = "../orchestrator-core" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+tracing = { workspace = true }
+axum = { version = "0.7", features = ["ws"] }
+# For timestamping the "lines were dropped" notice on /ws/logs.
+chrono = { workspace = true }
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+futures-util = "0.3"
+hyper = { version = "1", features = ["client", "http1"] }
+hyper-util = { version = "0.1", features = ["client", "client-legacy", "http1", "tokio"] }
+rand = "0.8"
+
+[dev-dependencies]
+# So the headless example can actually print what went wrong.
+tracing-subscriber = "0.3"
+tokio = { workspace = true, features = ["test-util"] }
+tempfile = "3"
