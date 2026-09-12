@@ -1,0 +1,111 @@
+name: Build openvscode-server (macOS + Windows)
+
+# Gitpod's own openvscode-server CI only ever publishes prebuilt release
+# binaries for Linux (x64/arm64/armhf) -- confirmed against the real
+# releases page, which ships exactly those three tarballs, and against
+# gitpod-io/openvscode-releases' own release.yml, whose build matrix
+# literally has darwin/win32 entries present but commented out. This
+# workflow is the first real attempt at those two platforms: build the
+# same "vscode-reh-web" (Remote Extension Host, web) server target Gitpod
+# builds for Linux, on macos-latest and windows-latest runners instead,
+# using the exact same gulp task sequence their real release.yml uses.
+#
+# This is a feasibility spike, not a finished release pipeline -- the goal
+# is a real binary on each platform so Odoo Orchestrator's editor sidecar
+# (task 4.1) has something real to spawn, not a guess at what "should"
+# work. First run is expected to need fixes; that is the point of running
+# it against real macOS/Windows runners instead of reasoning from docs.
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: "openvscode-server tag/commit to build (default: a known-good tagged release)"
+        required: false
+        default: "openvscode-server-v1.109.5"
+
+env:
+  RELEASE_COMMIT: ${{ github.event.inputs.commit || 'openvscode-server-v1.109.5' }}
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            platform: darwin
+            arch: x64
+          - os: windows-latest
+            platform: win32
+            arch: x64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out openvscode-server
+        uses: actions/checkout@v4
+        with:
+          repository: gitpod-io/openvscode-server
+          ref: ${{ env.RELEASE_COMMIT }}
+          path: openvscode-server
+
+      - name: Set up Node (from the checkout's own .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: openvscode-server/.nvmrc
+
+      - name: Set up Python (node-gyp needs it to build native modules like node-pty)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: npm ci
+        working-directory: openvscode-server
+        run: npm ci
+        env:
+          # Matches the real release workflow's own env for this step --
+          # keeps V8 code-cache writes out of the way during a fresh build.
+          DISABLE_V8_COMPILE_CACHE: 1
+
+      - name: Build core
+        working-directory: openvscode-server
+        run: npm run gulp core-ci
+
+      - name: Build extensions
+        working-directory: openvscode-server
+        run: npm run gulp extensions-ci
+
+      - name: Minify the reh-web server
+        working-directory: openvscode-server
+        run: npm run gulp minify-vscode-reh-web
+
+      - name: Build vscode-reh-web-${{ matrix.platform }}-${{ matrix.arch }}
+        working-directory: openvscode-server
+        run: npm run gulp vscode-reh-web-${{ matrix.platform }}-${{ matrix.arch }}-min-ci
+
+      - name: Locate the build output
+        shell: bash
+        run: |
+          # Same convention the real release workflow relies on: gulp
+          # writes the built server to a directory named
+          # vscode-reh-web-<platform>-<arch>, as a sibling of the checkout
+          # (i.e. next to the "openvscode-server" folder), not inside it.
+          ls -la .
+          test -d "vscode-reh-web-${{ matrix.platform }}-${{ matrix.arch }}" && \
+            echo "found: vscode-reh-web-${{ matrix.platform }}-${{ matrix.arch }}" || \
+            (echo "::error::build output directory not found where expected -- see the 'ls -la .' output above" && exit 1)
+
+      - name: Package the build output
+        shell: bash
+        run: |
+          NAME="openvscode-server-orchestrator-build-${{ matrix.platform }}-${{ matrix.arch }}"
+          mv "vscode-reh-web-${{ matrix.platform }}-${{ matrix.arch }}" "$NAME"
+          tar -czf "$NAME.tar.gz" "$NAME"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openvscode-server-${{ matrix.platform }}-${{ matrix.arch }}
+          path: openvscode-server-orchestrator-build-${{ matrix.platform }}-${{ matrix.arch }}.tar.gz
+          retention-days: 14
