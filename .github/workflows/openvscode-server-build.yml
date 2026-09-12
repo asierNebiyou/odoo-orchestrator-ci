@@ -59,6 +59,18 @@ name: Build openvscode-server (macOS + Windows)
 #    and buys nothing for a local dev sidecar binary, this workflow now
 #    runs `core-ci-pr` instead.
 #
+# 5. A green build here proves gulp exited 0 -- it doesn't prove the
+#    resulting binary actually serves anything. Added a smoke-test step
+#    (right after the build, before packaging) that launches the real
+#    ./bin/openvscode-server[.cmd] on the runner itself with the exact
+#    flags EditorConfig/EditorSupervisor already build
+#    (--host/--port/--connection-token/--user-data-dir/--extensions-dir/
+#    --default-folder/--accept-server-license-terms, confirmed against
+#    product.json's serverApplicationName and
+#    serverEnvironmentService.ts's real argv definitions) and curls the
+#    token-bearing URL until it gets back a real HTML page. This is what
+#    actually closes 4.1's platform-binary gap, not the build step alone.
+#
 # First run against these fixes is still a feasibility check, not a
 # guarantee -- other native modules (node-pty, native-watchdog,
 # windows-process-tree, windows-registry, kerberos, @parcel/watcher)
@@ -167,6 +179,65 @@ jobs:
           test -d "vscode-reh-web-${{ matrix.platform }}-${{ matrix.arch }}" && \
             echo "found: vscode-reh-web-${{ matrix.platform }}-${{ matrix.arch }}" || \
             (echo "::error::build output directory not found where expected -- see the 'ls -la .' output above" && exit 1)
+
+      - name: Smoke test - launch the real built server and verify it responds
+        shell: bash
+        run: |
+          set -e
+          # A green gulp build and an actually-working editor sidecar are
+          # different claims (see the file-level comment on 4.1's CI
+          # findings) -- neither this sandbox nor the Mac's own local
+          # helper VM can execute a real macOS/Windows GUI-server binary,
+          # so this runs the real README-documented launch command
+          # (./bin/openvscode-server, --host/--port/--connection-token/
+          # --user-data-dir/--extensions-dir/--default-folder/
+          # --accept-server-license-terms -- confirmed against product.json's
+          # serverApplicationName and src/vs/server/node/
+          # serverEnvironmentService.ts's real argv definitions, the exact
+          # flags EditorConfig/EditorSupervisor already build) on the CI
+          # runner itself, right where the binary was just built, and
+          # curls the token-bearing URL EditorSupervisor::url() builds --
+          # not just that gulp exited 0.
+          DIR="vscode-reh-web-${{ matrix.platform }}-${{ matrix.arch }}"
+          TOKEN="ci-smoke-test-token"
+          mkdir -p /tmp/ovsc-smoke/user-data /tmp/ovsc-smoke/extensions /tmp/ovsc-smoke/workspace
+
+          if [ "${{ matrix.platform }}" = "win32" ]; then
+            LAUNCHER="./$DIR/bin/openvscode-server.cmd"
+          else
+            LAUNCHER="./$DIR/bin/openvscode-server"
+            chmod +x "$LAUNCHER"
+          fi
+
+          "$LAUNCHER" \
+            --host 127.0.0.1 --port 39999 \
+            --connection-token "$TOKEN" \
+            --user-data-dir /tmp/ovsc-smoke/user-data \
+            --extensions-dir /tmp/ovsc-smoke/extensions \
+            --default-folder /tmp/ovsc-smoke/workspace \
+            --accept-server-license-terms &
+          SERVER_PID=$!
+
+          UP=""
+          for i in $(seq 1 30); do
+            if curl -sf "http://127.0.0.1:39999/?tkn=$TOKEN" -o /tmp/ovsc-smoke-response.html; then
+              UP=1
+              break
+            fi
+            sleep 2
+          done
+
+          if [ -z "$UP" ] || ! grep -qi "workbench\|<!DOCTYPE html>" /tmp/ovsc-smoke-response.html 2>/dev/null; then
+            echo "::error::openvscode-server did not respond with an HTML page within 60s -- the build succeeded but the binary itself doesn't serve"
+            cat /tmp/ovsc-smoke-response.html 2>/dev/null || true
+            kill "$SERVER_PID" 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "openvscode-server is real and serving -- first 300 bytes of the token-authed page:"
+          head -c 300 /tmp/ovsc-smoke-response.html
+          echo
+          kill "$SERVER_PID" 2>/dev/null || true
 
       - name: Package the build output
         shell: bash
