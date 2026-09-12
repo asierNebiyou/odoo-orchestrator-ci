@@ -7,14 +7,50 @@ name: Build openvscode-server (macOS + Windows)
 # literally has darwin/win32 entries present but commented out. This
 # workflow is the first real attempt at those two platforms: build the
 # same "vscode-reh-web" (Remote Extension Host, web) server target Gitpod
-# builds for Linux, on macos-latest and windows-latest runners instead,
-# using the exact same gulp task sequence their real release.yml uses.
+# builds for Linux, on real macOS/Windows runners instead, using the exact
+# same gulp task sequence their real release.yml uses.
 #
 # This is a feasibility spike, not a finished release pipeline -- the goal
 # is a real binary on each platform so Odoo Orchestrator's editor sidecar
 # (task 4.1) has something real to spawn, not a guess at what "should"
-# work. First run is expected to need fixes; that is the point of running
-# it against real macOS/Windows runners instead of reasoning from docs.
+# work. The first run against real runners surfaced two real, unrelated
+# native-module build failures (both fixed below, each with its own
+# evidence):
+#
+# 1. macOS runner architecture: `macos-latest` now resolves to an Apple
+#    Silicon (arm64) image, but the matrix asked for `arch: x64` (matching
+#    the actual dev machine this binary needs to run on, which is Intel).
+#    Fixed by pinning `macos-15-intel` -- GitHub's dedicated x86_64 image,
+#    supported through August 2027 per their own runner-images tracker
+#    (actions/runner-images#13045) -- instead of `macos-latest`.
+#
+# 2. macOS native-module build: `@vscode/spdlog`, pinned to exactly 0.15.7
+#    by this checkout's own remote/package-lock.json, bundles fmt's
+#    compile-time format-string checking (consteval), which a newer
+#    Xcode/Clang on GitHub's macOS image rejects as "not a constant
+#    expression". node-spdlog fixed this upstream by adding a
+#    `FMT_CONSTEVAL=` define to binding.gyp (present on their `main`
+#    branch/0.15.9, confirmed absent in the 0.15.7 tag this lockfile
+#    pins) -- https://github.com/microsoft/node-spdlog. Rather than fork
+#    openvscode-server's lockfile to bump one transitive dependency,
+#    inject the same define via CXXFLAGS for the macOS job only.
+#
+# 3. Windows native-module build: `node-gyp` failed to detect Visual
+#    Studio at all ("could not find a version of Visual Studio 2017 or
+#    newer") despite VS being genuinely installed, because `windows-latest`
+#    moved to Windows Server 2025 with Visual Studio 2026 (v18) in June
+#    2026 (actions/runner-images#14017), and node-gyp's version detection
+#    doesn't yet recognize v18 as a Visual Studio version at all --
+#    confirmed open upstream (nodejs/node-gyp#3282). GitHub's own fix for
+#    anyone needing the older toolchain is the dedicated `windows-2022`
+#    image label (still VS 2022 / v17, which node-gyp does recognize),
+#    named explicitly in their migration notice as the escape hatch.
+#
+# First run against these fixes is still a feasibility check, not a
+# guarantee -- other native modules (node-pty, native-watchdog,
+# windows-process-tree, windows-registry, kerberos, @parcel/watcher)
+# never got reached while spdlog/VS-detection were failing first, so this
+# workflow may need another round once they do.
 
 on:
   workflow_dispatch:
@@ -33,10 +69,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
+          # Real x64 Intel image -- macos-latest is arm64 now, and the
+          # binary this job produces needs to run on the actual (Intel)
+          # dev machine. Supported through Aug 2027 per GitHub's own
+          # runner-images tracker (actions/runner-images#13045).
+          - os: macos-15-intel
             platform: darwin
             arch: x64
-          - os: windows-latest
+          # Pinned below windows-latest's June 2026 move to VS2026 (v18),
+          # which node-gyp can't detect yet (nodejs/node-gyp#3282).
+          # windows-2022 keeps VS2022 (v17), which node-gyp does recognize.
+          - os: windows-2022
             platform: win32
             arch: x64
 
@@ -67,6 +110,11 @@ jobs:
           # Matches the real release workflow's own env for this step --
           # keeps V8 code-cache writes out of the way during a fresh build.
           DISABLE_V8_COMPILE_CACHE: 1
+          # macOS only: see the file-level comment (fix #2) -- disables
+          # fmt's consteval compile-time format-string checking inside
+          # @vscode/spdlog's bundled fmt, which this lockfile's pinned
+          # 0.15.7 doesn't yet do on its own.
+          CXXFLAGS: ${{ matrix.platform == 'darwin' && '-DFMT_CONSTEVAL=' || '' }}
 
       - name: Build core
         working-directory: openvscode-server
