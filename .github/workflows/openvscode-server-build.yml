@@ -46,6 +46,19 @@ name: Build openvscode-server (macOS + Windows)
 #    image label (still VS 2022 / v17, which node-gyp does recognize),
 #    named explicitly in their migration notice as the escape hatch.
 #
+# 4. Windows core build OOM: with the fixes above clearing npm ci, the
+#    Windows job got to `npm run gulp core-ci`'s mangling pass and died
+#    ~3 hours in with "Committing semi space failed... heap out of
+#    memory" -- a genuine OS-level memory exhaustion, not a V8 heap-limit
+#    hit (--max-old-space-size=8192 was already set). This is a known,
+#    unresolved upstream cost of vscode's mangler (microsoft/vscode#243708
+#    hit the identical crash on a 32-core/32GB local machine and was
+#    closed "not planned"). gulpfile.vscode.ts defines `core-ci-pr` as
+#    the unmangled sibling of `core-ci`, meant for PR validation builds --
+#    since mangling only obfuscates/shrinks names for official releases
+#    and buys nothing for a local dev sidecar binary, this workflow now
+#    runs `core-ci-pr` instead.
+#
 # First run against these fixes is still a feasibility check, not a
 # guarantee -- other native modules (node-pty, native-watchdog,
 # windows-process-tree, windows-registry, kerberos, @parcel/watcher)
@@ -116,9 +129,20 @@ jobs:
           # 0.15.7 doesn't yet do on its own.
           CXXFLAGS: ${{ matrix.platform == 'darwin' && '-DFMT_CONSTEVAL=' || '' }}
 
-      - name: Build core
+      - name: Build core (unmangled -- see fix #4 below)
         working-directory: openvscode-server
-        run: npm run gulp core-ci
+        # core-ci runs compile-build-with-mangling, which OOM'd on the
+        # Windows job ("Committing semi space failed... heap out of
+        # memory") after ~3 hours in the mangler's rename-edit pass over
+        # 9494 classes / 11860 exported symbols -- a real, unresolved
+        # upstream problem (microsoft/vscode#243708 hit the identical
+        # failure on a 32-core/32GB local machine, closed "not planned").
+        # gulpfile.vscode.ts also defines core-ci-pr -- upstream's own
+        # cheaper PR-validation variant, identical except it runs
+        # compile-build-without-mangling. Mangling only obfuscates/shrinks
+        # names for official releases; it buys nothing for a local dev
+        # sidecar binary, so use core-ci-pr instead of fighting the OOM.
+        run: npm run gulp core-ci-pr
 
       - name: Build extensions
         working-directory: openvscode-server
